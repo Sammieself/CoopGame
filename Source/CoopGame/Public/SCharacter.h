@@ -19,13 +19,23 @@ public:
 	virtual FVector GetPawnViewLocation() const override;
 
 protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
 
+	bool bWantsToZoom;
+	float DefaultFOV;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Player")
+	float ZoomedFOV;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Player", meta = (ClampMin = 0.1, ClampMax = 100.0))
+	float ZoomInterpSpeed;
+
+	virtual void BeginPlay() override;
 	void MoveForward(float Value);
 	void MoveRight(float Value);
 	void BeginCrouch();
 	void EndCrouch();
+	void BeginZoom();
+	void EndZoom();
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	UCameraComponent* CameraComp;
