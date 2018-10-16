@@ -6,6 +6,7 @@
 
 class UCameraComponent;
 class USpringArmComponent;
+class ASWeapon;
 
 UCLASS()
 class COOPGAME_API ASCharacter : public ACharacter
@@ -36,6 +37,22 @@ protected:
 	void EndCrouch();
 	void BeginZoom();
 	void EndZoom();
+
+	ASWeapon* CurrentWeapon;
+
+	UPROPERTY(VisibleDefaultsOnly, Category = "Player")
+	FName WeaponAttachSocketName;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Player")
+	TSubclassOf<ASWeapon> StarterWeaponClass;
+
+	UFUNCTION(BlueprintCallable, Category = "Player")
+	void Fire();
+
+	//UFUNCTION(BlueprintCallable, Category = "Player")
+	//void StopFire();
+
+
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	UCameraComponent* CameraComp;
