@@ -5,6 +5,7 @@
 #include "SWeapon.generated.h"
 
 class USkeletalMeshComponent;
+class UCameraShake;
 class UDamageType;
 class UParticleSystem;
 
@@ -29,6 +30,9 @@ protected:
 
 	void PlayFireEffects(FVector TraceEnd);
 
+	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
+	TSubclassOf<UCameraShake> FireCamShake;
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon")
 	TSubclassOf<UDamageType> DamageType;
 
@@ -39,7 +43,10 @@ protected:
 	UParticleSystem* MuzzleEffect;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon")
-	UParticleSystem* ImpactEffect;
+	UParticleSystem* DefaultImpactEffect;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon")
+	UParticleSystem* FlashImpactEffect;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon")
 	UParticleSystem* TracerEffect;

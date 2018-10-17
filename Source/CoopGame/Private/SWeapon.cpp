@@ -5,6 +5,8 @@
 #include "Particles/ParticleSystem.h"
 #include "Particles/ParticleSystemComponent.h"
 #include "Components/SkeletalMeshComponent.h"
+#include "CoopGame.h"
+#include "PhysicalMaterials/PhysicalMaterial.h"
 
 static int32 DebugWeaponDrawing = 0;
 FAutoConsoleVariableRef CVARDebugWeaponDrawing(
@@ -55,13 +57,27 @@ void ASWeapon::Fire()
 					MyOwner->GetInstigatorController(),
 					this,
 					DamageType);
-			if (ImpactEffect) {
-				UGameplayStatics::SpawnEmitterAtLocation(
-						GetWorld(),
-						ImpactEffect,
-						Hit.ImpactPoint,
-						Hit.ImpactNormal.Rotation());
+		
+			EPhysicalSurface SurfaceType = UPhysicalMaterial::DetermineSurfaceType(Hit.PhysMaterial.Get());
+			UParticleSystem* SelectEffect = nullptr;
+			switch (SurfaceType) {
+			case SURFACE_FLESH_DEFAULT: //FlashDefault
+			case SURFACE_FLESH_VULNERABLE:
+				SelectEffect = FlashImpactEffect;
+				break;
+			default:
+				SelectEffect = DefaultImpactEffect;
+				break;
 			}
+
+			if (SelectEffect) {
+				UGameplayStatics::SpawnEmitterAtLocation(
+					GetWorld(),
+					SelectEffect,
+					Hit.ImpactPoint,
+					Hit.ImpactNormal.Rotation());
+			}
+
 			TracerEndPoint = Hit.ImpactPoint;
 		}
 		if (DebugWeaponDrawing > 0) {
@@ -84,4 +100,13 @@ void ASWeapon::PlayFireEffects(FVector TraceEnd)
 			TracerComp->SetVectorParameter(TracerTargetName, TraceEnd);
 		}
 	}
+
+	APawn* MyOwner = Cast<APawn>(GetOwner());
+	if (MyOwner) {
+		APlayerController* PC = Cast<APlayerController>(MyOwner->GetController());
+		if (PC) {
+			PC->ClientPlayCameraShake(FireCamShake);
+		}
+	}
+
 }
