@@ -7,6 +7,7 @@
 #include "Components/SkeletalMeshComponent.h"
 #include "CoopGame.h"
 #include "PhysicalMaterials/PhysicalMaterial.h"
+#include "TimerManager.h"
 
 static int32 DebugWeaponDrawing = 0;
 FAutoConsoleVariableRef CVARDebugWeaponDrawing(
@@ -23,6 +24,14 @@ ASWeapon::ASWeapon()
 
 	MuzzleSocketName = "MuzzleSocket";
 	TracerTargetName = "Target";
+	BaseDamage = 20.0f;
+	FireRate = 600; //bullets per minute
+}
+
+void ASWeapon::BeginPlay()
+{
+	Super::BeginPlay();
+	TimeBetweenShots = 60 / FireRate;
 }
 
 void ASWeapon::Fire()
@@ -46,7 +55,7 @@ void ASWeapon::Fire()
 		QueryParams.bReturnPhysicalMaterial = true;
 
 		FHitResult Hit;
-		if (GetWorld()->LineTraceSingleByChannel(Hit, EyeLocation, TraceEnd, ECC_Visibility, QueryParams)) {
+		if (GetWorld()->LineTraceSingleByChannel(Hit, EyeLocation, TraceEnd, COLLISION_WEAPON, QueryParams)) {
 			//Blocking hit process damage
 			AActor* HitActor = Hit.GetActor();
 			UGameplayStatics::ApplyPointDamage(
@@ -59,6 +68,19 @@ void ASWeapon::Fire()
 					DamageType);
 		
 			EPhysicalSurface SurfaceType = UPhysicalMaterial::DetermineSurfaceType(Hit.PhysMaterial.Get());
+			float ActualDamage = BaseDamage;
+			if (SurfaceType == SURFACE_FLESH_VULNERABLE) {
+				ActualDamage *= 4.0f;
+			}
+			UGameplayStatics::ApplyPointDamage(
+				HitActor,
+				ActualDamage,
+				ShootDirection,
+				Hit,
+				MyOwner->GetInstigatorController(),
+				this,
+				DamageType);
+
 			UParticleSystem* SelectEffect = nullptr;
 			switch (SurfaceType) {
 			case SURFACE_FLESH_DEFAULT: //FlashDefault
@@ -84,7 +106,25 @@ void ASWeapon::Fire()
 			DrawDebugLine(GetWorld(), EyeLocation, TraceEnd, FColor::White, false, 1.0f, 0, 1.0f);
 		}
 		PlayFireEffects(TracerEndPoint);
+		LastFireTime = GetWorld()->TimeSeconds;
 	}
+}
+
+void ASWeapon::StartFire()
+{
+	float FirstDelay = FMath::Max(LastFireTime + TimeBetweenShots - GetWorld()->TimeSeconds, 0.0f);
+	GetWorldTimerManager().SetTimer(
+		TimerHandle_TimeBetweenShots,
+		this,
+		&ASWeapon::Fire,
+		TimeBetweenShots,
+		true,
+		FirstDelay);
+}
+
+void ASWeapon::StopFire()
+{
+	GetWorldTimerManager().ClearTimer(TimerHandle_TimeBetweenShots);
 }
 
 void ASWeapon::PlayFireEffects(FVector TraceEnd)

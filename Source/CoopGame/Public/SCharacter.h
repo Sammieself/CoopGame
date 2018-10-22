@@ -47,10 +47,10 @@ protected:
 	TSubclassOf<ASWeapon> StarterWeaponClass;
 
 	UFUNCTION(BlueprintCallable, Category = "Player")
-	void Fire();
+	void StartFire();
 
-	//UFUNCTION(BlueprintCallable, Category = "Player")
-	//void StopFire();
+	UFUNCTION(BlueprintCallable, Category = "Player")
+	void StopFire();
 
 
 

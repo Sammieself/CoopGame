@@ -18,15 +18,16 @@ public:
 	// Sets default values for this actor's properties
 	ASWeapon();
 
-	UFUNCTION(BlueprintCallable, Category = "Weapon")
 	virtual void Fire();
+	void StartFire();
+	void StopFire();
 	
 protected:
+
+	virtual void BeginPlay() override;
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	USkeletalMeshComponent* MeshComp;
-
-	
 
 	void PlayFireEffects(FVector TraceEnd);
 
@@ -53,5 +54,17 @@ protected:
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Weapon")
 	FName TracerTargetName;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon")
+	float BaseDamage;
+
+	FTimerHandle TimerHandle_TimeBetweenShots;
+
+	float LastFireTime;
+	float TimeBetweenShots;
+
+	//RPM bullets per minute
+	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
+	float FireRate;
 
 };
