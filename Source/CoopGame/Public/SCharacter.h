@@ -7,6 +7,7 @@
 class UCameraComponent;
 class USpringArmComponent;
 class ASWeapon;
+class USHealthComponent;
 
 UCLASS()
 class COOPGAME_API ASCharacter : public ACharacter
@@ -52,13 +53,27 @@ protected:
 	UFUNCTION(BlueprintCallable, Category = "Player")
 	void StopFire();
 
+	UFUNCTION(BlueprintCallable, Category = "Player")
+	void OnHealthChanged(
+		USHealthComponent* OwningHealthComp,
+		float Health,
+		float HealthDelta,
+		const class UDamageType* DamageType,
+		class AController* InstigatedBy,
+		AActor* DamageCauser
+	);
 
+	UPROPERTY(BlueprintReadOnly, Category = "Player")
+	bool bDied;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	UCameraComponent* CameraComp;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	USpringArmComponent* SpringArmComp;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	USHealthComponent* HealthComp;
 
 public:	
 	// Called every frame
