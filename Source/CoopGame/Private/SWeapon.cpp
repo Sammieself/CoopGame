@@ -96,18 +96,15 @@ void ASWeapon::Fire()
 
 			TracerEndPoint = Hit.ImpactPoint;
 			HitScanTrace.SurfaceType = SurfaceType;
-
 		}
 		if (DebugWeaponDrawing > 0) {
 			DrawDebugLine(GetWorld(), EyeLocation, TraceEnd, FColor::White, false, 1.0f, 0, 1.0f);
 		}
 		PlayFireEffects(TracerEndPoint);
-
 		if (Role == ROLE_Authority) {
 			HitScanTrace.TraceTo = TracerEndPoint;
 			HitScanTrace.SurfaceType = SurfaceType;
 		}
-
 		LastFireTime = GetWorld()->TimeSeconds;
 	}
 }

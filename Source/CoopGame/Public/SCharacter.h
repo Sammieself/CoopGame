@@ -64,7 +64,7 @@ protected:
 		AActor* DamageCauser
 	);
 
-	UPROPERTY(BlueprintReadOnly, Category = "Player")
+	UPROPERTY(Replicated, BlueprintReadOnly, Category = "Player")
 	bool bDied;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
