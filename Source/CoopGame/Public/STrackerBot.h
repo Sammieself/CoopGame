@@ -80,6 +80,18 @@ protected:
 	FTimerHandle TimerHandle_SelfDamage;
 
 	void DamageSelf();
+
+	// CHALLENGE CODE	
+
+	// Find nearby enemies and grow in 'power level' based on the amount.
+	void OnCheckNearbyBots();
+
+	// the power boost of the bot, affects damaged caused to enemies and color of the bot (range: 1 to 4)
+	int32 PowerLevel;
+
+	FTimerHandle TimerHandle_RefreshPath;
+
+	void RefreshPath();
 	
 public:	
 	// Called every frame
