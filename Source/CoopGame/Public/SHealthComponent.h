@@ -56,4 +56,8 @@ public:
 
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "HealthComponent")
 	static bool IsFriendly(AActor* ActorA, AActor* ActorB);
+
+	UFUNCTION(BlueprintCallable, Category = "HealthComponent")
+	void Heal(float HealAmount);
+
 };

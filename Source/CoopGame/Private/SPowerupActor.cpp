@@ -53,6 +53,7 @@ void ASPowerupActor::ActivatePowerup(AActor* ActiveFor)
 	}
 }
 
+
 void ASPowerupActor::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);

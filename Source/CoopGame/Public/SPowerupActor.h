@@ -3,6 +3,7 @@
 #include "GameFramework/Actor.h"
 #include "SPowerupActor.generated.h"
 
+
 UCLASS()
 class COOPGAME_API ASPowerupActor : public AActor
 {
