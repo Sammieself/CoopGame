@@ -1,10 +1,12 @@
 #include "SHealthComponent.h"
 #include "Net/UnrealNetwork.h"
+#include "SGameMode.h"
 
 // Sets default values for this component's properties
 USHealthComponent::USHealthComponent()
 {
 	DefaultHealth = 100;
+	bIsDead = false;
 	TeamNum = 255;
 
 	SetIsReplicated(true);
@@ -40,7 +42,7 @@ void USHealthComponent::HandleTakeAnyDamage(
 	class AController* InstigatedBy,
 	AActor* DamageCauser)
 {
-	if (Damage <= 0.0f) {
+	if (Damage <= 0.0f || bIsDead) {
 		return;
 	}
 
@@ -49,7 +51,16 @@ void USHealthComponent::HandleTakeAnyDamage(
 
 	UE_LOG(LogTemp, Log, TEXT("Health Changed: %s"), *FString::SanitizeFloat(Health));
 
+	bIsDead = Health <= 0.0f;
+
 	OnHealthChanged.Broadcast(this, Health, Damage, DamageType, InstigatedBy, DamageCauser);
+
+	if (bIsDead) {
+		ASGameMode* GM = Cast<ASGameMode>(GetWorld()->GetAuthGameMode());
+		if (GM) {
+			GM->OnActorKilled.Broadcast(GetOwner(), DamageCauser, InstigatedBy);
+		}
+	}	
 }
 
 
